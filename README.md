@@ -108,24 +108,33 @@ Interface completa com:
 ## 💰 Modelos de Precificação
 
 ### CondoBI Base
-- **R$ 150/mês** por condomínio
+- **R$ 2,00 por unidade/mês**
+- **Mínimo: R$ 150,00/mês**
 - Dashboard Power BI completo
 - Alertas automáticos
 - Transparência total
+- Relatórios mensais
+- Suporte por email
+
+**Exemplo:** Condomínio com 100 unidades = R$ 200,00/mês
 
 ### SíndicoAI Premium
-- **R$ 400/mês** por condomínio
+- **R$ 5,00 por unidade/mês**
+- **Mínimo: R$ 400,00/mês**
 - Tudo do Base +
 - IA Jurídica completa
 - Integração operacional
 - Análise preditiva
 - Suporte 24/7
 
+**Exemplo:** Condomínio com 100 unidades = R$ 500,00/mês
+
 ### Cobrança Inteligente
 - **15%** sobre valor recuperado
-- Sem custo fixo
+- **Sem custo fixo ou mínimo**
 - 68% de taxa de sucesso média
 - Win-win total
+- IA personalizada para cobrança
 
 ## 🚦 Como Começar
 

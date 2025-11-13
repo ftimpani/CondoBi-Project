@@ -1,6 +1,7 @@
 import Head from 'next/head'
 import Link from 'next/link'
 import { useState } from 'react'
+import { PRICING_PLANS, getPriceDisplay, calculatePrice, formatCurrency } from '../config/pricing'
 
 export default function LandingPage() {
   const [formData, setFormData] = useState({
@@ -170,59 +171,51 @@ export default function LandingPage() {
 
             <div className="grid md:grid-cols-3 gap-8 max-w-5xl mx-auto">
               {[
-                {
-                  name: 'CondoBI Base',
-                  price: 'R$ 150',
-                  period: '/mês',
-                  features: ['Dashboard Power BI', 'Alertas automáticos', 'Transparência total', 'Relatórios mensais', 'Suporte por email'],
-                  featured: false
-                },
-                {
-                  name: 'SíndicoAI Premium',
-                  price: 'R$ 400',
-                  period: '/mês',
-                  features: ['Tudo do Base +', 'IA Jurídica completa', 'Integração operacional', 'Análise preditiva', 'Suporte 24/7'],
-                  featured: true
-                },
-                {
-                  name: 'Cobrança Inteligente',
-                  price: '15%',
-                  period: 'do recuperado',
-                  features: ['Sem custo fixo', 'Só paga se recuperar', 'IA personalizada', '68% taxa de sucesso', 'Win-win total'],
-                  featured: false
-                }
-              ].map((plan, idx) => (
-                <div key={idx} className={`bg-white rounded-2xl p-8 ${plan.featured ? 'ring-4 ring-primary-500 shadow-2xl scale-105' : 'shadow-lg'} relative`}>
-                  {plan.featured && (
-                    <div className="absolute -top-4 left-1/2 -translate-x-1/2 bg-primary-600 text-white px-6 py-2 rounded-full text-sm font-bold">
-                      🔥 MAIS POPULAR
+                { key: 'basic', featured: false },
+                { key: 'premium', featured: true },
+                { key: 'smartBilling', featured: false }
+              ].map(({ key, featured }, idx) => {
+                const plan = PRICING_PLANS[key as keyof typeof PRICING_PLANS]
+                const priceDisplay = getPriceDisplay(key as keyof typeof PRICING_PLANS)
+
+                return (
+                  <div key={idx} className={`bg-white rounded-2xl p-8 ${featured ? 'ring-4 ring-primary-500 shadow-2xl scale-105' : 'shadow-lg'} relative`}>
+                    {featured && (
+                      <div className="absolute -top-4 left-1/2 -translate-x-1/2 bg-primary-600 text-white px-6 py-2 rounded-full text-sm font-bold">
+                        🔥 MAIS POPULAR
+                      </div>
+                    )}
+                    <h3 className="text-2xl font-bold mb-4">{plan.name}</h3>
+                    <div className="mb-6">
+                      <span className="text-5xl font-bold text-primary-600">{priceDisplay.price}</span>
+                      <span className="text-gray-600">{priceDisplay.period}</span>
+                      {priceDisplay.details && (
+                        <div className="text-sm text-gray-500 mt-2">
+                          {priceDisplay.details}
+                        </div>
+                      )}
                     </div>
-                  )}
-                  <h3 className="text-2xl font-bold mb-4">{plan.name}</h3>
-                  <div className="mb-6">
-                    <span className="text-5xl font-bold text-primary-600">{plan.price}</span>
-                    <span className="text-gray-600">{plan.period}</span>
+                    <ul className="space-y-3 mb-8">
+                      {plan.features.map((feature, i) => (
+                        <li key={i} className="flex items-center gap-2">
+                          <span className="text-green-500 font-bold">✓</span>
+                          <span>{feature}</span>
+                        </li>
+                      ))}
+                    </ul>
+                    <a
+                      href="#form"
+                      className={`block text-center py-3 rounded-lg font-bold transition-all ${
+                        featured
+                          ? 'bg-primary-600 text-white hover:bg-primary-700'
+                          : 'bg-gray-100 text-gray-800 hover:bg-gray-200'
+                      }`}
+                    >
+                      Começar Agora
+                    </a>
                   </div>
-                  <ul className="space-y-3 mb-8">
-                    {plan.features.map((feature, i) => (
-                      <li key={i} className="flex items-center gap-2">
-                        <span className="text-green-500 font-bold">✓</span>
-                        <span>{feature}</span>
-                      </li>
-                    ))}
-                  </ul>
-                  <a
-                    href="#form"
-                    className={`block text-center py-3 rounded-lg font-bold transition-all ${
-                      plan.featured
-                        ? 'bg-primary-600 text-white hover:bg-primary-700'
-                        : 'bg-gray-100 text-gray-800 hover:bg-gray-200'
-                    }`}
-                  >
-                    Começar Agora
-                  </a>
-                </div>
-              ))}
+                )
+              })}
             </div>
           </div>
         </section>
