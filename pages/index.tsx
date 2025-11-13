@@ -21,8 +21,8 @@ export default function LandingPage() {
   return (
     <>
       <Head>
-        <title>CondoBI + SíndicoAI - A Primeira Plataforma de Gestão Condominial com IA do Brasil</title>
-        <meta name="description" content="Transforme dados em decisões. IA que interpreta contratos, recupera inadimplência e conecta apps operacionais." />
+        <title>CondoBI + SíndicoAI: A Revolução da Gestão Condominial com Inteligência Artificial</title>
+        <meta name="description" content="A primeira e única plataforma no Brasil que une BI e IA Jurídica para eliminar a ineficiência, reduzir a inadimplência e garantir a paz no seu condomínio." />
       </Head>
 
       <div className="min-h-screen">
@@ -30,28 +30,27 @@ export default function LandingPage() {
         <section className="bg-gradient-to-br from-primary-600 to-primary-900 text-white py-20 px-4">
           <div className="max-w-6xl mx-auto text-center">
             <h1 className="text-5xl md:text-6xl font-bold mb-6 animate-fade-in">
-              CondoBI + SíndicoAI
+              CondoBI + SíndicoAI: A Revolução da Gestão Condominial com Inteligência Artificial
             </h1>
             <p className="text-2xl italic mb-4 opacity-95">
-              "Apps operacionais cuidam do dia a dia. O SíndicoAI cuida do que ninguém vê."
+              "Deixe o caos para trás. O SíndicoAI cuida do que ninguém vê: a saúde financeira e jurídica do seu condomínio."
             </p>
             <p className="text-xl mb-8 opacity-90 max-w-3xl mx-auto">
-              A primeira plataforma de gestão condominial com Inteligência Artificial do Brasil.
-              Transforme dados em decisões, transparência em confiança, e gestão em resultado.
+              A primeira e única plataforma no Brasil que une Business Intelligence (CondoBI) e Inteligência Artificial Jurídica e Preditiva (SíndicoAI) para eliminar a ineficiência, reduzir a inadimplência e garantir a paz no seu condomínio.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Link
-                href="/portal"
-                className="bg-accent text-primary-900 px-8 py-4 rounded-full font-bold text-lg hover:scale-105 transition-transform shadow-lg"
-              >
-                🚀 Acessar Portal
-              </Link>
               <a
                 href="#form"
+                className="bg-accent text-primary-900 px-8 py-4 rounded-full font-bold text-lg hover:scale-105 transition-transform shadow-lg"
+              >
+                Solicitar Demonstração Gratuita
+              </a>
+              <Link
+                href="/portal"
                 className="bg-white/10 backdrop-blur-sm border-2 border-white text-white px-8 py-4 rounded-full font-bold text-lg hover:bg-white hover:text-primary-600 transition-all"
               >
-                📊 Solicitar Demo
-              </a>
+                Acessar Portal (Para Clientes)
+              </Link>
             </div>
           </div>
         </section>
@@ -61,16 +60,16 @@ export default function LandingPage() {
           <div className="max-w-6xl mx-auto">
             <div className="grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
               <div>
-                <div className="text-4xl font-bold text-primary-600">350 mil</div>
-                <div className="text-gray-600 text-sm font-semibold">Condomínios no Brasil</div>
+                <div className="text-4xl font-bold text-primary-600">+350 mil</div>
+                <div className="text-gray-600 text-sm font-semibold">Condomínios no Brasil (Mercado Total)</div>
               </div>
               <div>
                 <div className="text-4xl font-bold text-primary-600">68%</div>
-                <div className="text-gray-600 text-sm font-semibold">Taxa de Recuperação</div>
+                <div className="text-gray-600 text-sm font-semibold">de Sucesso na Recuperação de Inadimplência</div>
               </div>
               <div>
                 <div className="text-4xl font-bold text-primary-600">R$ 2,1bi</div>
-                <div className="text-gray-600 text-sm font-semibold">Mercado Total (TAM)</div>
+                <div className="text-gray-600 text-sm font-semibold">em Mercado Potencial (TAM)</div>
               </div>
               <div>
                 <div className="text-4xl font-bold text-primary-600">15h/sem</div>
@@ -85,7 +84,7 @@ export default function LandingPage() {
           <div className="max-w-6xl mx-auto">
             <div className="text-center mb-16">
               <h2 className="text-4xl md:text-5xl font-bold mb-4">
-                A Gestão Condominial no Brasil É Ineficiente
+                O Custo Oculto da Ineficiência: Por que a Gestão Condominial Custa Milhões ao Ano?
               </h2>
               <p className="text-xl text-gray-600">
                 Síndicos e administradoras enfrentam problemas que custam milhões por ano
@@ -94,12 +93,12 @@ export default function LandingPage() {
 
             <div className="grid md:grid-cols-3 gap-8 mb-12">
               {[
-                { icon: '😰', title: 'Sobrecarga Operacional', desc: 'Síndicos perdem 15h/semana com tarefas burocráticas' },
-                { icon: '💸', title: 'Inadimplência Alta', desc: '12% de inadimplência desperdiça R$ 8 bilhões/ano' },
-                { icon: '⚖️', title: 'Processos Judiciais', desc: 'Cada processo custa R$ 15 mil em média' },
-                { icon: '📊', title: 'Falta de Transparência', desc: 'Dados confusos geram conflitos entre moradores' },
-                { icon: '🔄', title: 'Sistemas Isolados', desc: 'Apps não conversam, perdendo inteligência valiosa' },
-                { icon: '🤖', title: 'Sem Inteligência Artificial', desc: 'Decisões baseadas em intuição, não em dados' }
+                { icon: '😰', title: 'Sobrecarga de Tempo', desc: '15 horas perdidas por semana em burocracia. O seu tempo vale mais.' },
+                { icon: '💸', title: 'Inadimplência Crônica', desc: '12% de inadimplência que drena R$ 8 bilhões do mercado. Recupere o que é seu.' },
+                { icon: '⚖️', title: 'Risco Jurídico e Financeiro', desc: 'Cada processo judicial custa, em média, R$ 15 mil. Previna-se com IA.' },
+                { icon: '📊', title: 'Conflitos e Desconfiança', desc: 'Dados confusos e falta de clareza geram atritos constantes entre moradores. Construa confiança.' },
+                { icon: '🔄', title: 'Fragmentação de Dados', desc: 'Sistemas que não se comunicam, transformando dados valiosos em ruído. Centralize a inteligência.' },
+                { icon: '🤖', title: 'Decisões no Escuro', desc: 'Gestão baseada em "achismos" e intuição, sem o poder da análise preditiva. Decida com precisão.' }
               ].map((problem, idx) => (
                 <div key={idx} className="bg-white p-6 rounded-xl shadow-md hover:shadow-xl transition-shadow">
                   <div className="text-5xl mb-4">{problem.icon}</div>
@@ -116,7 +115,7 @@ export default function LandingPage() {
           <div className="max-w-6xl mx-auto">
             <div className="text-center mb-16">
               <h2 className="text-4xl md:text-5xl font-bold mb-4">
-                O Sistema Nervoso Central da Gestão Condominial
+                O Sistema Nervoso Central da Gestão Condominial: A Solução Completa para Síndicos e Administradoras
               </h2>
               <p className="text-xl text-gray-600">
                 Uma plataforma que pensa, prevê e age em nome do síndico
@@ -127,20 +126,20 @@ export default function LandingPage() {
               {[
                 {
                   icon: '📱',
-                  title: '1. Apps Operacionais (Sensores)',
-                  desc: 'Integração com seus apps existentes - Conectamos com portaria digital, gestão de entregas, reservas e ocorrências.',
+                  title: '1. Apps Operacionais (Sensores): Integração Total',
+                  desc: 'Conectamos todos os seus sistemas (portaria, reservas, ocorrências) para alimentar a IA com dados em tempo real.',
                   color: 'border-blue-500'
                 },
                 {
                   icon: '🧠',
-                  title: '2. SíndicoAI (Cérebro Inteligente)',
-                  desc: 'IA Jurídica + Cobrança + Preditiva - Interpreta contratos, identifica riscos, recupera inadimplência automaticamente.',
+                  title: '2. SíndicoAI (Cérebro Inteligente): Ação Preditiva e Jurídica',
+                  desc: 'Nossa IA interpreta contratos, prevê riscos, e executa a cobrança de inadimplência de forma automática e legalmente segura.',
                   color: 'border-purple-500'
                 },
                 {
                   icon: '📊',
-                  title: '3. CondoBI (Governança)',
-                  desc: 'Dashboards + Alertas + Automação - Centraliza indicadores, gera relatórios e torna toda gestão transparente.',
+                  title: '3. CondoBI (Governança): Transparência e Controle',
+                  desc: 'Dashboards intuitivos, alertas automáticos e relatórios gerenciais que centralizam indicadores e garantem total transparência para síndicos e moradores.',
                   color: 'border-green-500'
                 }
               ].map((layer, idx) => (
@@ -161,10 +160,10 @@ export default function LandingPage() {
           <div className="max-w-6xl mx-auto">
             <div className="text-center mb-16">
               <h2 className="text-4xl md:text-5xl font-bold mb-4">
-                Investimento Transparente e Justo
+                Escolha o Plano que Revoluciona a Sua Gestão
               </h2>
               <p className="text-xl text-gray-600">
-                Escolha o plano ideal para o seu condomínio
+                Investimento Transparente e Focado em Resultado
               </p>
             </div>
 
@@ -172,42 +171,49 @@ export default function LandingPage() {
               {[
                 {
                   name: 'CondoBI Base',
+                  subtitle: 'O Essencial para a Transparência',
                   price: 'R$ 150',
                   period: '/mês',
                   features: ['Dashboard Power BI', 'Alertas automáticos', 'Transparência total', 'Relatórios mensais', 'Suporte por email'],
-                  featured: false
+                  featured: false,
+                  cta: 'Começar Agora'
                 },
                 {
                   name: 'SíndicoAI Premium',
+                  subtitle: 'A Gestão Completa com IA',
                   price: 'R$ 400',
                   period: '/mês',
                   features: ['Tudo do Base +', 'IA Jurídica completa', 'Integração operacional', 'Análise preditiva', 'Suporte 24/7'],
-                  featured: true
+                  featured: true,
+                  cta: 'Começar Agora'
                 },
                 {
                   name: 'Cobrança Inteligente',
+                  subtitle: 'Recuperação de Inadimplência (Risco Zero)',
                   price: '15%',
                   period: 'do recuperado',
-                  features: ['Sem custo fixo', 'Só paga se recuperar', 'IA personalizada', '68% taxa de sucesso', 'Win-win total'],
-                  featured: false
+                  features: ['Custo Zero Fixo: Você só paga se houver recuperação', 'Comissão de Sucesso: Apenas 15% do valor efetivamente recuperado', 'IA Jurídica Personalizada: Estratégias de cobrança otimizadas pela nossa IA', '68% de Taxa de Sucesso Comprovada', 'Parceria Ganha-Ganha: Nosso sucesso é o seu sucesso'],
+                  featured: false,
+                  cta: 'Recuperar Inadimplência Agora'
                 }
               ].map((plan, idx) => (
                 <div key={idx} className={`bg-white rounded-2xl p-8 ${plan.featured ? 'ring-4 ring-primary-500 shadow-2xl scale-105' : 'shadow-lg'} relative`}>
                   {plan.featured && (
                     <div className="absolute -top-4 left-1/2 -translate-x-1/2 bg-primary-600 text-white px-6 py-2 rounded-full text-sm font-bold">
-                      🔥 MAIS POPULAR
+                      MAIS POPULAR
                     </div>
                   )}
-                  <h3 className="text-2xl font-bold mb-4">{plan.name}</h3>
+                  <h3 className="text-2xl font-bold mb-2">{plan.name}</h3>
+                  <p className="text-gray-600 mb-4 text-sm">{plan.subtitle}</p>
                   <div className="mb-6">
                     <span className="text-5xl font-bold text-primary-600">{plan.price}</span>
                     <span className="text-gray-600">{plan.period}</span>
                   </div>
                   <ul className="space-y-3 mb-8">
                     {plan.features.map((feature, i) => (
-                      <li key={i} className="flex items-center gap-2">
-                        <span className="text-green-500 font-bold">✓</span>
-                        <span>{feature}</span>
+                      <li key={i} className="flex items-start gap-2">
+                        <span className="text-green-500 font-bold mt-1">✓</span>
+                        <span className="text-sm">{feature}</span>
                       </li>
                     ))}
                   </ul>
@@ -219,7 +225,7 @@ export default function LandingPage() {
                         : 'bg-gray-100 text-gray-800 hover:bg-gray-200'
                     }`}
                   >
-                    Começar Agora
+                    {plan.cta}
                   </a>
                 </div>
               ))}
