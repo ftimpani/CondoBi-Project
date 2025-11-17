@@ -1,0 +1,507 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ==================== AUTENTICAÇÃO E USUÁRIOS ====================
+
+model User {
+  id            String    @id @default(cuid())
+  name          String
+  email         String    @unique
+  emailVerified DateTime?
+  password      String
+  image         String?
+  role          UserRole  @default(USER)
+  active        Boolean   @default(true)
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  // Relações
+  accounts      Account[]
+  sessions      Session[]
+  condominiums  UserCondominium[]
+  units         Unit[]          @relation("UnitOwner")
+  tenantUnits   Unit[]          @relation("UnitTenant")
+  notifications Notification[]
+  auditLogs     AuditLog[]
+
+  @@map("users")
+}
+
+model Account {
+  id                String  @id @default(cuid())
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String? @db.Text
+  access_token      String? @db.Text
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String? @db.Text
+  session_state     String?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+  @@map("accounts")
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("sessions")
+}
+
+model VerificationToken {
+  identifier String
+  token      String   @unique
+  expires    DateTime
+
+  @@unique([identifier, token])
+  @@map("verification_tokens")
+}
+
+enum UserRole {
+  ADMIN
+  MANAGER
+  SYNDIC
+  USER
+  RESIDENT
+}
+
+// ==================== CONDOMÍNIOS ====================
+
+model Condominium {
+  id          String   @id @default(cuid())
+  name        String
+  cnpj        String?  @unique
+  address     String
+  city        String
+  state       String
+  zipCode     String
+  phone       String?
+  email       String?
+  totalUnits  Int
+  active      Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  // Configurações
+  settings    Json?
+
+  // Relações
+  users       UserCondominium[]
+  buildings   Building[]
+  units       Unit[]
+  expenses    Expense[]
+  revenues    Revenue[]
+  assemblies  Assembly[]
+  documents   Document[]
+  suppliers   Supplier[]
+  contracts   Contract[]
+  maintenanceRequests MaintenanceRequest[]
+
+  @@map("condominiums")
+}
+
+model UserCondominium {
+  id            String        @id @default(cuid())
+  userId        String
+  condominiumId String
+  role          CondominiumRole
+  createdAt     DateTime      @default(now())
+
+  user        User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  condominium Condominium @relation(fields: [condominiumId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, condominiumId])
+  @@map("user_condominiums")
+}
+
+enum CondominiumRole {
+  ADMIN
+  SYNDIC
+  COUNCIL_MEMBER
+  RESIDENT
+  VIEWER
+}
+
+model Building {
+  id            String   @id @default(cuid())
+  condominiumId String
+  name          String
+  floors        Int
+  unitsPerFloor Int
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  condominium Condominium @relation(fields: [condominiumId], references: [id], onDelete: Cascade)
+  units       Unit[]
+
+  @@map("buildings")
+}
+
+model Unit {
+  id            String   @id @default(cuid())
+  condominiumId String
+  buildingId    String?
+  number        String
+  floor         Int?
+  type          UnitType
+  area          Float?
+  ownerId       String?
+  tenantId      String?
+  fraction      Float    @default(1.0) // Fração ideal
+  active        Boolean  @default(true)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  condominium Condominium @relation(fields: [condominiumId], references: [id], onDelete: Cascade)
+  building    Building?   @relation(fields: [buildingId], references: [id])
+  owner       User?       @relation("UnitOwner", fields: [ownerId], references: [id])
+  tenant      User?       @relation("UnitTenant", fields: [tenantId], references: [id])
+
+  charges     Charge[]
+  maintenanceRequests MaintenanceRequest[]
+
+  @@unique([condominiumId, number])
+  @@map("units")
+}
+
+enum UnitType {
+  APARTMENT
+  HOUSE
+  COMMERCIAL
+  PARKING
+  STORAGE
+}
+
+// ==================== GESTÃO FINANCEIRA ====================
+
+model Expense {
+  id            String       @id @default(cuid())
+  condominiumId String
+  category      ExpenseCategory
+  description   String
+  amount        Float
+  dueDate       DateTime
+  paidDate      DateTime?
+  status        PaymentStatus @default(PENDING)
+  supplierId    String?
+  contractId    String?
+  notes         String?      @db.Text
+  attachments   Json?
+  createdAt     DateTime     @default(now())
+  updatedAt     DateTime     @updatedAt
+
+  condominium Condominium @relation(fields: [condominiumId], references: [id], onDelete: Cascade)
+  supplier    Supplier?   @relation(fields: [supplierId], references: [id])
+  contract    Contract?   @relation(fields: [contractId], references: [id])
+
+  @@map("expenses")
+}
+
+enum ExpenseCategory {
+  MAINTENANCE
+  CLEANING
+  SECURITY
+  ELECTRICITY
+  WATER
+  GAS
+  INSURANCE
+  ADMINISTRATION
+  LEGAL
+  REPAIR
+  OTHER
+}
+
+model Revenue {
+  id            String        @id @default(cuid())
+  condominiumId String
+  category      RevenueCategory
+  description   String
+  amount        Float
+  receivedDate  DateTime
+  notes         String?       @db.Text
+  createdAt     DateTime      @default(now())
+  updatedAt     DateTime      @updatedAt
+
+  condominium Condominium @relation(fields: [condominiumId], references: [id], onDelete: Cascade)
+
+  @@map("revenues")
+}
+
+enum RevenueCategory {
+  CONDOMINIUM_FEE
+  RESERVE_FUND
+  RENTAL
+  EVENT
+  FINES
+  OTHER
+}
+
+model Charge {
+  id          String        @id @default(cuid())
+  unitId      String
+  month       Int
+  year        Int
+  amount      Float
+  dueDate     DateTime
+  paidDate    DateTime?
+  status      PaymentStatus @default(PENDING)
+  paymentMethod String?
+  notes       String?       @db.Text
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+
+  unit Unit @relation(fields: [unitId], references: [id], onDelete: Cascade)
+
+  @@unique([unitId, month, year])
+  @@map("charges")
+}
+
+enum PaymentStatus {
+  PENDING
+  PAID
+  OVERDUE
+  CANCELLED
+}
+
+// ==================== FORNECEDORES E CONTRATOS ====================
+
+model Supplier {
+  id            String   @id @default(cuid())
+  condominiumId String
+  name          String
+  cnpj          String?
+  email         String?
+  phone         String?
+  address       String?
+  category      String
+  active        Boolean  @default(true)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  condominium Condominium @relation(fields: [condominiumId], references: [id], onDelete: Cascade)
+  contracts   Contract[]
+  expenses    Expense[]
+
+  @@map("suppliers")
+}
+
+model Contract {
+  id            String         @id @default(cuid())
+  condominiumId String
+  supplierId    String
+  description   String
+  amount        Float
+  startDate     DateTime
+  endDate       DateTime?
+  status        ContractStatus @default(ACTIVE)
+  paymentDay    Int?
+  notes         String?        @db.Text
+  attachments   Json?
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @updatedAt
+
+  condominium Condominium @relation(fields: [condominiumId], references: [id], onDelete: Cascade)
+  supplier    Supplier    @relation(fields: [supplierId], references: [id])
+  expenses    Expense[]
+
+  @@map("contracts")
+}
+
+enum ContractStatus {
+  ACTIVE
+  EXPIRED
+  CANCELLED
+  PENDING
+}
+
+// ==================== ASSEMBLEIAS E DOCUMENTOS ====================
+
+model Assembly {
+  id            String        @id @default(cuid())
+  condominiumId String
+  title         String
+  description   String        @db.Text
+  date          DateTime
+  type          AssemblyType
+  quorum        Float?
+  status        AssemblyStatus @default(SCHEDULED)
+  location      String?
+  agenda        Json?
+  minutes       String?       @db.Text
+  attachments   Json?
+  createdAt     DateTime      @default(now())
+  updatedAt     DateTime      @updatedAt
+
+  condominium Condominium @relation(fields: [condominiumId], references: [id], onDelete: Cascade)
+  votes       Vote[]
+
+  @@map("assemblies")
+}
+
+enum AssemblyType {
+  ORDINARY
+  EXTRAORDINARY
+}
+
+enum AssemblyStatus {
+  SCHEDULED
+  IN_PROGRESS
+  COMPLETED
+  CANCELLED
+}
+
+model Vote {
+  id         String   @id @default(cuid())
+  assemblyId String
+  userId     String
+  topic      String
+  vote       VoteType
+  createdAt  DateTime @default(now())
+
+  assembly Assembly @relation(fields: [assemblyId], references: [id], onDelete: Cascade)
+
+  @@map("votes")
+}
+
+enum VoteType {
+  FAVOR
+  AGAINST
+  ABSTAIN
+}
+
+model Document {
+  id            String       @id @default(cuid())
+  condominiumId String
+  title         String
+  description   String?
+  category      DocumentCategory
+  fileUrl       String
+  fileSize      Int?
+  mimeType      String?
+  uploadedBy    String?
+  createdAt     DateTime     @default(now())
+  updatedAt     DateTime     @updatedAt
+
+  condominium Condominium @relation(fields: [condominiumId], references: [id], onDelete: Cascade)
+
+  @@map("documents")
+}
+
+enum DocumentCategory {
+  INVOICE
+  CONTRACT
+  ASSEMBLY_MINUTES
+  BUDGET
+  REPORT
+  REGULATION
+  LETTER
+  OTHER
+}
+
+// ==================== MANUTENÇÃO ====================
+
+model MaintenanceRequest {
+  id            String            @id @default(cuid())
+  condominiumId String
+  unitId        String?
+  title         String
+  description   String            @db.Text
+  category      MaintenanceCategory
+  priority      Priority
+  status        MaintenanceStatus @default(OPEN)
+  requestedBy   String?
+  assignedTo    String?
+  resolvedAt    DateTime?
+  notes         String?           @db.Text
+  attachments   Json?
+  createdAt     DateTime          @default(now())
+  updatedAt     DateTime          @updatedAt
+
+  condominium Condominium @relation(fields: [condominiumId], references: [id], onDelete: Cascade)
+  unit        Unit?       @relation(fields: [unitId], references: [id])
+
+  @@map("maintenance_requests")
+}
+
+enum MaintenanceCategory {
+  PLUMBING
+  ELECTRICAL
+  CLEANING
+  ELEVATOR
+  PAINTING
+  CARPENTRY
+  GARDENING
+  SECURITY
+  OTHER
+}
+
+enum Priority {
+  LOW
+  MEDIUM
+  HIGH
+  URGENT
+}
+
+enum MaintenanceStatus {
+  OPEN
+  IN_PROGRESS
+  RESOLVED
+  CANCELLED
+}
+
+// ==================== NOTIFICAÇÕES E LOGS ====================
+
+model Notification {
+  id        String           @id @default(cuid())
+  userId    String
+  title     String
+  message   String           @db.Text
+  type      NotificationType
+  read      Boolean          @default(false)
+  createdAt DateTime         @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("notifications")
+}
+
+enum NotificationType {
+  INFO
+  WARNING
+  ALERT
+  SUCCESS
+}
+
+model AuditLog {
+  id         String   @id @default(cuid())
+  userId     String?
+  action     String
+  entity     String
+  entityId   String?
+  changes    Json?
+  ipAddress  String?
+  userAgent  String?
+  createdAt  DateTime @default(now())
+
+  user User? @relation(fields: [userId], references: [id])
+
+  @@map("audit_logs")
+}
