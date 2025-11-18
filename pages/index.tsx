@@ -33,7 +33,7 @@ export default function LandingPage() {
               CondoBI + SíndicoAI
             </h1>
             <p className="text-2xl italic mb-4 opacity-95">
-              "Apps operacionais cuidam do dia a dia. O SíndicoAI cuida do que ninguém vê."
+              &ldquo;Apps operacionais cuidam do dia a dia. O SíndicoAI cuida do que ninguém vê.&rdquo;
             </p>
             <p className="text-xl mb-8 opacity-90 max-w-3xl mx-auto">
               A primeira plataforma de gestão condominial com Inteligência Artificial do Brasil.
