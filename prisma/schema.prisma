@@ -1,0 +1,300 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// Modelo de Usuário
+model User {
+  id            String    @id @default(cuid())
+  email         String    @unique
+  name          String?
+  password      String
+  role          UserRole  @default(MORADOR)
+  emailVerified DateTime?
+  image         String?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  // Relações
+  condominioId  String?
+  condominio    Condominio? @relation(fields: [condominioId], references: [id])
+  accounts      Account[]
+  sessions      Session[]
+  chatMessages  ChatMessage[]
+  notifications Notification[]
+  payments      Payment[]
+
+  @@index([email])
+  @@index([condominioId])
+}
+
+enum UserRole {
+  ADMIN
+  SINDICO
+  MORADOR
+  FUNCIONARIO
+  ADMINISTRADORA
+}
+
+// Modelo de Conta (para OAuth)
+model Account {
+  id                String  @id @default(cuid())
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String? @db.Text
+  access_token      String? @db.Text
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String? @db.Text
+  session_state     String?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+  @@index([userId])
+}
+
+// Modelo de Sessão
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+}
+
+// Modelo de Token de Verificação
+model VerificationToken {
+  identifier String
+  token      String   @unique
+  expires    DateTime
+
+  @@unique([identifier, token])
+}
+
+// Modelo de Condomínio
+model Condominio {
+  id          String   @id @default(cuid())
+  nome        String
+  cnpj        String?  @unique
+  endereco    String
+  cidade      String
+  estado      String
+  cep         String
+  totalUnits  Int      @default(0)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  // Relações
+  users         User[]
+  financeiro    Financeiro[]
+  eventos       Evento[]
+  documentos    Documento[]
+  forumTopics   ForumTopic[]
+  powerBIConfig PowerBIConfig?
+
+  @@index([cnpj])
+}
+
+// Modelo Financeiro
+model Financeiro {
+  id            String   @id @default(cuid())
+  condominioId  String
+  mes           Int
+  ano           Int
+  receitas      Float    @default(0)
+  despesas      Float    @default(0)
+  inadimplencia Float    @default(0)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  condominio Condominio @relation(fields: [condominioId], references: [id], onDelete: Cascade)
+  payments   Payment[]
+
+  @@unique([condominioId, mes, ano])
+  @@index([condominioId])
+}
+
+// Modelo de Pagamento
+model Payment {
+  id            String        @id @default(cuid())
+  userId        String
+  financeiroId  String
+  valor         Float
+  status        PaymentStatus @default(PENDENTE)
+  dueDate       DateTime
+  paidDate      DateTime?
+  paymentMethod String?
+  pixCode       String?
+  boletoUrl     String?
+  createdAt     DateTime      @default(now())
+  updatedAt     DateTime      @updatedAt
+
+  user       User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  financeiro Financeiro @relation(fields: [financeiroId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([financeiroId])
+  @@index([status])
+}
+
+enum PaymentStatus {
+  PENDENTE
+  PAGO
+  ATRASADO
+  CANCELADO
+}
+
+// Modelo de Evento
+model Evento {
+  id           String   @id @default(cuid())
+  condominioId String
+  titulo       String
+  descricao    String?  @db.Text
+  dataInicio   DateTime
+  dataFim      DateTime
+  tipo         String
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  condominio Condominio @relation(fields: [condominioId], references: [id], onDelete: Cascade)
+
+  @@index([condominioId])
+  @@index([dataInicio])
+}
+
+// Modelo de Documento
+model Documento {
+  id           String   @id @default(cuid())
+  condominioId String
+  titulo       String
+  descricao    String?  @db.Text
+  tipo         String
+  fileUrl      String
+  fileSize     Int?
+  uploadedBy   String
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  condominio Condominio @relation(fields: [condominioId], references: [id], onDelete: Cascade)
+
+  @@index([condominioId])
+  @@index([tipo])
+}
+
+// Modelo de Fórum
+model ForumTopic {
+  id           String        @id @default(cuid())
+  condominioId String
+  titulo       String
+  conteudo     String        @db.Text
+  autorId      String
+  status       TopicStatus   @default(ABERTO)
+  tipo         String?
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @updatedAt
+
+  condominio Condominio    @relation(fields: [condominioId], references: [id], onDelete: Cascade)
+  replies    ForumReply[]
+  votes      ForumVote[]
+
+  @@index([condominioId])
+  @@index([status])
+}
+
+enum TopicStatus {
+  ABERTO
+  FECHADO
+  VOTACAO
+  FINALIZADO
+}
+
+// Modelo de Resposta do Fórum
+model ForumReply {
+  id        String   @id @default(cuid())
+  topicId   String
+  conteudo  String   @db.Text
+  autorId   String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  topic ForumTopic @relation(fields: [topicId], references: [id], onDelete: Cascade)
+
+  @@index([topicId])
+}
+
+// Modelo de Votação
+model ForumVote {
+  id        String   @id @default(cuid())
+  topicId   String
+  userId    String
+  voto      Boolean  // true = a favor, false = contra
+  createdAt DateTime @default(now())
+
+  topic ForumTopic @relation(fields: [topicId], references: [id], onDelete: Cascade)
+
+  @@unique([topicId, userId])
+  @@index([topicId])
+}
+
+// Modelo de Mensagem do Chat IA
+model ChatMessage {
+  id        String   @id @default(cuid())
+  userId    String
+  role      String   // 'user' ou 'assistant'
+  content   String   @db.Text
+  tokens    Int?
+  createdAt DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([createdAt])
+}
+
+// Modelo de Notificação
+model Notification {
+  id        String   @id @default(cuid())
+  userId    String
+  titulo    String
+  conteudo  String   @db.Text
+  tipo      String
+  lida      Boolean  @default(false)
+  createdAt DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([lida])
+  @@index([createdAt])
+}
+
+// Modelo de Configuração Power BI
+model PowerBIConfig {
+  id             String   @id @default(cuid())
+  condominioId   String   @unique
+  workspaceId    String
+  reportId       String
+  datasetId      String?
+  embedUrl       String
+  accessToken    String?  @db.Text
+  tokenExpires   DateTime?
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  condominio Condominio @relation(fields: [condominioId], references: [id], onDelete: Cascade)
+
+  @@index([condominioId])
+}
